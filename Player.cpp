@@ -18,13 +18,13 @@ void Player::Body_When_Tick()
 		if (a==' '&&Cold_Time==0)
 		{
 			Shot();
-			Cold_Time = 5;
+			Cold_Time = 1;
 		}
 		if (Cold_Time != 0)
 		{
 			--Cold_Time;
 			putimage(
-				Body.Enity_Coord.x - 16,
+				Body.Enity_Coord.x,
 				0,
 				8,
 				Body.Enity_Coord.y,
@@ -97,10 +97,12 @@ void Player::Body_When_Tick()
 	当speed.x>特定值,putimage的图片参数用左倾的图片
 	右倾同理
 	*/
-	putimage(
-		Body.Enity_Coord.x-16,
-		Body.Enity_Coord.y-16,
-		Body.Enity_Img_ptr
+	putimage_transparent(
+		NULL,
+		Body.Enity_Img_ptr,
+		Body.Enity_Coord.x-48,
+		Body.Enity_Coord.y-48,
+		0x0ed145
 	);
 }
 
@@ -120,29 +122,27 @@ void Player::Show_HP()
 	outtext(Out);
 }
 
-const int ShotJD = 32;
+const int ShotJD = 64;
 
 void Player::Shot()
 {
-	putimage(
-		Body.Enity_Coord.x - 16,
-		0,
-		8,
-		Body.Enity_Coord.y,
-		Img_Resource::Img_Save[12],
-		0,
-		0,
-		8,
-		8
-	);
 	auto Enemy_Iter = Enemy_List.begin();
 	for (;Enemy_Iter != Enemy_List.end();)
 	{
 		if ((*Enemy_Iter)->Body.Enity_Coord.x>=Body.Enity_Coord.x-16-ShotJD
 			&& (*Enemy_Iter)->Body.Enity_Coord.x<=Body.Enity_Coord.x-16+ShotJD)
 		{
-			delete (*Enemy_Iter);
-			Enemy_Iter = Enemy_List.erase(Enemy_Iter);
+			if ((*Enemy_Iter)->Body.Health_Point <= 0)
+			{
+				delete (*Enemy_Iter);
+				Enemy_Iter = Enemy_List.erase(Enemy_Iter);
+			}
+			else
+			{
+				--(*Enemy_Iter)->Body.Health_Point;
+				++Enemy_Iter;
+			}
+			
 		}
 		else
 		{

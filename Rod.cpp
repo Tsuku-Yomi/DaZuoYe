@@ -11,11 +11,12 @@ void EnityAI::Next_Spd(Speed& In)
 	}
 }
 
-EnityAI::EnityAI(std::vector<Speed>& In):Spd(In),Spd_Iter(0)
+EnityAI::EnityAI(std::vector<Speed>& In,int _Type,int _Img_Type):Spd(In),Spd_Iter(0),Type(_Type),Img_Type(_Img_Type)
 {
+	
 }
 
-EnityAI::EnityAI(Speed& In) : Spd_Iter(0), Spd()
+EnityAI::EnityAI(Speed& In, int _Type,int _Img_Type) :Spd_Iter(0), Spd(),Type(_Type),Img_Type(_Img_Type)
 {
 	Spd.push_back(Speed());
 	Spd.push_back(In);

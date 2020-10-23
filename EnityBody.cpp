@@ -16,7 +16,7 @@ EnityBody::EnityBody(
 
 void Img_Resource::ReadFile()//要啥自己往里放，注意一下不要位置冲突了
 {
-	Img_Save[1] = newimage(32, 32);
+	Img_Save[1] = newimage(96, 96);
 	getimage(Img_Save[1], "Player.png", 0, 0);
 	Img_Save[11] = newimage(8, 8);
 	getimage(Img_Save[11], "Bullte.png", 0, 0);
@@ -24,4 +24,8 @@ void Img_Resource::ReadFile()//要啥自己往里放，注意一下不要位置冲突了
 	getimage(Img_Save[321], "BackGround.png", 0, 0);
 	Img_Save[12] = newimage(8, 8);
 	getimage(Img_Save[12], "PlayerBullte.png", 0, 0);
+	Img_Save[13] = newimage(96, 96);
+	getimage(Img_Save[13], "Enemy.png", 0, 0);
+	Img_Save[14] = newimage(128, 128);
+	getimage(Img_Save[14], "Boss.png", 0, 0);
 }

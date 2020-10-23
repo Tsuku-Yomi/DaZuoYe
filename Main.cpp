@@ -14,38 +14,47 @@ using namespace std;
 
 extern std::list<Bullte_Base*> Bullte_List= std::list<Bullte_Base*>();
 extern std::list<Enemy_Base*> Enemy_List=std::list<Enemy_Base*>();
+
 /*
-留给来花里胡哨的修改的人
-这就是一坨电子垃圾
-不要吐槽
-你需要一个ege图形库作为前置（请百度
-插入新图片请到Img_Resource类的ReadFile函数
-修改机制请派生Enemy_Base类和Bullte_Base类
-残余大量垃圾代码，请随意删除
-大量功能未添加，请自行添加
-大量代码无注释，请自己想象
 作者：Tsuku_Yomi_
+*/
+
+/*
+* 最后一步，修改读入与生成弹幕，就完成了
 */
 
 Screen_Coord Using_To_Rod[100];
 vector<Speed> Rod_For_Enemy[100];
-vector<Speed> Rod_For_Bullte[100];
-
+vector<vector<Speed>> Rod_For_Bullte[100];
+vector<int> ShotTimeSav[100];
+Enemy_Base* (*Spawn_Enemy_Fun[100])(std::vector<Speed>&,
+	std::vector< std::vector<Speed> >&,
+	Screen_Coord,
+	short,
+	int,
+	std::vector<int>&) {
+	Enemy_Base::SpwEnemy_Base
+};
 
 void ReadEnemyFile();
 
 int main()
 {
+	bool isCheat = false;
 	initgraph(640, 1024);
-	setcaption("STG Coder:YangHaiJun 8002119366 PE1912");
+	setcaption("又来偷书的摸你傻");
 	//PlaySound(TEXT("1.wav"), NULL, SND_ASYNC);
 	Img_Resource::ReadFile();
 	Player NowPlayer=Player();
+	if (isCheat)
+	{
+		NowPlayer.Body.Health_Point = 114514;
+	}
 	vector<Speed> Enemy_Spd;
 	vector<Speed> Bullte_Spd;
-	////TestLine
+	/*///TestLine
 	Enemy_Spd.push_back(Speed(0, 0, 1));
-	Enemy_Spd.push_back(Speed(0, 0.01, 100));
+	Enemy_Spd.push_back(Speed(0, 0.01, 1000));
 	Enemy_Spd.push_back(Speed(0, 0, 300));
 	Enemy_Spd.push_back(Speed(0, -0.01, 100));
 	Enemy_Spd.push_back(Speed(0, 0, 300));
@@ -74,12 +83,17 @@ int main()
 				for (int i = 0;i < TinLine;i++)
 				{
 					EnemyLine >> RodE >> RodB >> x >> y >> Img >> HP >> ShotT;
-					Enemy_List.insert(Enemy_List.begin(),new Enemy_Base(Rod_For_Enemy[RodE], Rod_For_Bullte[RodB], Screen_Coord(x, y), Img, HP, ShotT));
+					auto MovT = ShotTimeSav[RodB];
+					MovT.push_back(ShotT);
+					Enemy_List.insert(Enemy_List.begin(),Spawn_Enemy_Fun[0](Rod_For_Enemy[RodE],Rod_For_Bullte[RodB],Screen_Coord(x,y),Img,HP,MovT));
 				}
 			}
 			else
 			{
-				break;
+				outtext("You Win!Press any key to exit");
+				getch();
+				ege::closegraph();
+				return 0;
 			}
 		}
 		NowPlayer.Body_When_Tick();
@@ -102,7 +116,7 @@ int main()
 			if (!(*Enemy_Iter)->Enemy_When_Tick())
 			{
 				delete* Enemy_Iter;
-				getch();
+				//getch();
 				Enemy_Iter=Enemy_List.erase(Enemy_Iter);
 			}
 			else
@@ -137,16 +151,24 @@ void ReadEnemyFile()
 	}
 	EnemyFile.close();
 	EnemyFile.open("Bullte_Rod.txt");
+	int SingleLo,UsingTime;
 	EnemyFile >> Line;
 	for (int i = 0;i < Line;i++)
 	{
 		EnemyFile >> No >> Lo;
-		Rod_For_Bullte[No].push_back(Speed(0, 0, 1));
-		for (int r = 0;r < Lo;r++)
+		for (int g = 0;g < Lo;++g)
 		{
-			EnemyFile >> dx >> dy >> tim;
-			Rod_For_Bullte[No].push_back(Speed(dx, dy, tim));
+			EnemyFile >> SingleLo>>UsingTime;
+			ShotTimeSav[No].push_back(UsingTime);
+			Rod_For_Bullte[No].push_back(vector<Speed>());
+			Rod_For_Bullte[No][g].push_back(Speed(0, 0, 1));
+			for (int r = 0;r < SingleLo;r++)
+			{
+				EnemyFile >> dx >> dy >> tim;
+				Rod_For_Bullte[No][g].push_back(Speed(dx, dy, tim));
+			}
 		}
+		
 	}
 	EnemyFile.close();
 }
